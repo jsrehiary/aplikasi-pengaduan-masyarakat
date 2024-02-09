@@ -4,7 +4,7 @@
     <div class="w-100 my-3"></div>
 
     <section id="home">
-        <div class="row min-vh-100">
+        <div class="row min-vh-100 d-flex justify-content-center align-items-center">
             <div class="col">
                 <div class="w-100 my-3"></div>
 
@@ -21,7 +21,7 @@
         </div>
         <div class="row">
             <div class="col">
-                
+
             </div>
         </div>
     </section>
@@ -30,32 +30,35 @@
         <div class="col">
             <section id="history">
                 <h2 class="mb-4">Histori Laporan</h2>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th scope="col">Tanggal Laporan</th>
-                            <th scope="col">Laporan</th>
-                            <th scope="col">Kategori</th>
-                            <th scope="col">Foto</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($laporans as $laporan)
+                <div class="table-responsive">
+                    <table class="table table-striped table-align-middle">
+                        <thead>
                             <tr>
-                                <td>{{ $laporan->created_at }}</td>
-                                <td>{{ $laporan->nama_laporan }}</td>
-                                <td>{{ $laporan->category->category_name }}</td>
-                                <td>
-                                    <img src="{{ $laporan->foto }}" alt="no image :(" style="max-width: 250px">
-                                </td>
+                                <th class="text-center">Tanggal Laporan</th>
+                                <th class="text-center">Laporan</th>
+                                <th class="text-center">Kategori</th>
+                                <th class="text-center">Foto</th>
                             </tr>
-                        @empty
-                            <div class="alert alert-danger">
-                                Belum ada laporan.
-                            </div>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @forelse ($laporans as $laporan)
+                                <tr>
+                                    <td class="text-center">{{ $laporan->created_at }}</td>
+                                    <td class="text-center">{{ $laporan->nama_laporan }}</td>
+                                    <td class="text-center">{{ $laporan->category->category_name }}</td>
+                                    <td class="text-center" class="text-center">
+                                        <img src="{{ asset('storage/images/' . $laporan->foto) }}" alt="no image :("
+                                            style="max-width: 250px">
+                                    </td>
+                                </tr>
+                            @empty
+                                <div class="alert alert-danger">
+                                    Belum ada laporan.
+                                </div>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
             </section>
         </div>
@@ -81,35 +84,62 @@
                             </div>
                             <div class="form-text" id="explainLaporId">*ID <b>dicatat</b> atau <b>disalin</b> untuk
                                 pemantauan lebih lanjut.</div>
+                            @error('id_laporan')
+                                <div class="alert alert-danger mt-2">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-lg-3 mb-3">
+                        <div class="col-lg-5 mb-3">
                             <label for="formKategori" class="form-label">Kategori</label>
                             <select name="kategori" id="formKategori" class="form-select">
                                 <option selected disabled hidden>Pilih Kategori</option>
                                 {{-- Select from Categories --}}
-                                @foreach ($categories as $category)
+                                @forelse ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->category_name }}</option>
-                                @endforeach
+                                @empty
+                                    <option>No Category Found.</option>
+                                @endforelse
                             </select>
+                            @error('kategori')
+                                <div class="alert alert-danger mt-2">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
-                        <div class="col-lg-9 mb-3">
+                        <div class="col-lg-7 mb-3">
                             <label for="formLaporan" class="form-label">Laporan</label>
                             <input type="text" class="form-control" id="formLaporan" name="laporan" required>
                         </div>
+                        @error('laporan')
+                            <div class="alert alert-danger mt-2">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="row row-cols-1 row-cols-lg-2">
                         <div class="col mb-3">
                             <label for="formDetail" class="form-label">Detail</label>
                             <textarea class="form-control" id="formDetail" rows="3" name="detail" required></textarea>
+                            @error('detail')
+                                <div class="alert alert-danger mt-2">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                         <div class="col mb-3">
                             <label for="formAlamat" class="form-label">Alamat</label>
                             <textarea class="form-control" id="formAlamat" rows="3" name="alamat" required></textarea>
+                            @error('alamat')
+                                <div class="alert alert-danger mt-2">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                     </div>
 
@@ -117,6 +147,11 @@
                         <div class="col mb-3">
                             <label for="formFoto" class="form-label">Foto Kejadian</label>
                             <input type="file" name="foto" id="formFoto" class="form-control" required>
+                            @error('foto')
+                                <div class="alert alert-danger mt-2">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
                     </div>
 
@@ -152,7 +187,35 @@
 @endsection
 
 @section('script')
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <script>
+        //message with toastr
+        @if (session()->has('success'))
+            toastr.success('{{ session('success') }}', 'BERHASIL!');
+        @elseif (session()->has('error'))
+
+            toastr.error('{{ session('error') }}', 'GAGAL!');
+        @endif
+
+        // DEBUG
+        document.getElementById('formKategori').value = 2;
+        document.getElementById('formLaporan').value = generateRandomString();
+        document.getElementById('formDetail').value = generateRandomString();
+        document.getElementById('formAlamat').value = generateRandomString();
+        // DELETE IF DONE
+
+        function generateRandomString() {
+            // Generate a random alphanumeric string with a length of 10 characters
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 10; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+
         function copyLaporId() {
             const laporId = document.getElementById('formLaporId')
             laporId.select();

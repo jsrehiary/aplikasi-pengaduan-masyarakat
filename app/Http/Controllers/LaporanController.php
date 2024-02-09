@@ -31,7 +31,7 @@ class LaporanController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'id_laporan' => 'required|string',
+            'id_laporan' => 'required|string|regex:/^LAPOR_\d{10}_[A-Za-z0-9]{5}$/',
             'kategori'   => 'required|string',
             'laporan'    => 'required|string',
             'detail'     => 'required|string',

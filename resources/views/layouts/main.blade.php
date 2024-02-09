@@ -8,12 +8,14 @@
     <title>APPAM - {{ $title }} </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    @yield('css')
+
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container">
-            <a class="navbar-brand" href="#">APPAM</a>
+            <a class="navbar-brand" href="{{ route('index') }}">APPAM</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -22,26 +24,38 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link {{ $title === "Beranda" ? 'active' : '' }}" href="/">Beranda</a>
+                        <a class="nav-link {{ $title === 'Beranda' ? 'active' : '' }}"
+                            href="{{ route('index') }}">Beranda</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ $title === "Galeri" ? 'active' : '' }}" href="/gallery">Galeri</a>
+                        <a class="nav-link {{ $title === 'Galeri' ? 'active' : '' }}" href="/gallery">Galeri</a>
                     </li>
                 </ul>
-                <div class="d-flex">
-                    <a class="link-hover text-decoration-none border-3 border-start border-end px-3" href="/login">Admin Login</a>
+                @auth('user')
+                    <span class="link-hover text-decoration-none border-3 border-start border-end px-3">
+                        Welcome, {{ auth('user')->user()->name }}!
+                    </span>
+                @else
+                    <a class="link-hover text-decoration-none border-3 border-start border-end px-3"
+                        href="{{ route('login.index') }}">Login</a>
+                @endauth
                 </div>
             </div>
+        </nav>
+        <div class="container">
+            @yield('content')
         </div>
-    </nav>
-    <div class="container">
-        @yield('content')
-    </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.0/dist/sweetalert2.all.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
+        </script>
+        @yield('script')
+    </body>
 
-    @yield('script')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
-    </script>
-</body>
-
-</html>
+    </html>
