@@ -30,11 +30,11 @@
 
     <script>
         @if (Session::has('success'))
-            Swal.fire('Success', '{{ Session::get('success') }}', 'success');
+            Swal.fire('Berhasil', '{!! Session::get('success') !!}', 'success');
         @endif
 
         @if (Session::has('failed'))
-            Swal.fire('Error', '{{ Session::get('failed') }}', 'error');
+            Swal.fire('Gagal', '{!! Session::get('failed') !!}', 'error');
         @endif
     </script>
 @endsection

@@ -1,37 +1,32 @@
 @extends('layouts.main')
 
 @section('content')
-    <div class="w-100 my-3"></div>
-
     <section id="home">
         <div class="row min-vh-100 d-flex justify-content-center align-items-center">
-            <div class="col">
-                <div class="w-100 my-3"></div>
-
+            <div class="col bg-secondary-subtle m-3 p-3 rounded shadow">
                 <h2>Aplikasi Pelayanan Pengaduan dan Aspirasi Masyarakat</h2>
 
                 <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nam perspiciatis quo sint facere inventore ad,
                     maxime iste eos aut debitis incidunt saepe id! Iusto deleniti accusamus vero, ut sed delectus.</p>
-                <div class="list-group list-group-flush">
+                <div class="list-group">
                     <a class="btn btn-lg btn-info list-group-item text-start" href="#history">History</a>
                     <a class="btn btn-lg btn-info list-group-item text-start" href="#form">Form</a>
                     <a class="btn btn-lg btn-info list-group-item text-start" href="#cari">Cari</a>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col">
-
+            <div class="col m-3 p-3">
+                <img src="https://1.bp.blogspot.com/-WuOcrksAEuE/WyFnD63-nlI/AAAAAAAABm0/iXeNp_2uGvwb-K7xlwlMbGQuBJqv4SX7gCEwYBhgL/s1600/gifs-on-cli.gif" alt="offline?" style="max-width: 550px;">
             </div>
         </div>
+
     </section>
 
     <div class="row min-vh-100 d-flex justify-content-center align-items-center">
-        <div class="col">
+        <div class="col border p-3 bg-secondary-subtle  shadow rounded">
             <section id="history">
                 <h2 class="mb-4">Histori Laporan</h2>
                 <div class="table-responsive">
-                    <table class="table table-striped table-align-middle">
+                    <table class="table table-bordered table-striped table-align-middle">
                         <thead>
                             <tr>
                                 <th class="text-center">Tanggal Laporan</th>
@@ -67,11 +62,8 @@
     <div class="row min-vh-100 d-flex justify-content-center align-items-center">
         <div class="col">
             <section id="form" class="p-5 border rounded shadow bg-secondary-subtle">
-                {{-- Let's create the form from here --}}
-                <H2>Form Laporan Pengaduan</H2>
-
+                <h2>Form Laporan Pengaduan</h2>
                 <div class="my-4 w-100 bg-success rounded" style="height: 3px;"></div>
-
                 <form action="{{ route('store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
@@ -187,33 +179,39 @@
 @endsection
 
 @section('script')
-    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.0/dist/sweetalert2.all.min.js"></script>
 
     <script>
-        //message with toastr
-        @if (session()->has('success'))
-            toastr.success('{{ session('success') }}', 'BERHASIL!');
-        @elseif (session()->has('error'))
-
-            toastr.error('{{ session('error') }}', 'GAGAL!');
+        @if (Session::has('success'))
+            Swal.fire('Berhasil', '{!! Session::get('success') !!}', 'success');
         @endif
 
+        @if (Session::has('rIdLaporan'))
+            Swal.fire('Laporan Terkirim', 'ID Laporan: {!! Session::get('rIdLaporan') !!}', 'success');
+        @endif
+
+        @if (Session::has('failed'))
+            Swal.fire('Gagal', '{!! Session::get('failed') !!}', 'error');
+        @endif
+    </script>
+
+    <script>
         // DEBUG
         document.getElementById('formKategori').value = 2;
-        document.getElementById('formLaporan').value = generateRandomString();
-        document.getElementById('formDetail').value = generateRandomString();
-        document.getElementById('formAlamat').value = generateRandomString();
-        // DELETE IF DONE
+        document.getElementById('formLaporan').value = generateRandomString(24);
+        document.getElementById('formDetail').value = generateRandomString(58);
+        document.getElementById('formAlamat').value = "Jl. " + generateRandomString(10) + ", " + generateRandomString(12);
 
-        function generateRandomString() {
+        function generateRandomString(length) {
             // Generate a random alphanumeric string with a length of 10 characters
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             let result = '';
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < length; i++) {
                 result += characters.charAt(Math.floor(Math.random() * characters.length));
             }
             return result;
         }
+        // DELETE IF DONE
 
 
         function copyLaporId() {
@@ -222,7 +220,12 @@
             document.execCommand('copy');
             laporId.setSelectionRange(0, 0);
 
-            alert('Disalin ke clipboard: ' + laporId.value);
+            Swal.fire({
+                icon: 'info',
+                title: 'Tersalin ke clipboard:',
+                text: laporId.value,
+            });
+
         }
     </script>
 @endsection

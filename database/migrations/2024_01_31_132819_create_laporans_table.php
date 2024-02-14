@@ -19,6 +19,9 @@ return new class extends Migration
             $table->text('detail');
             $table->text('alamat');
             $table->string('foto');
+
+            $table->char('status', 1)->nullable();
+            $table->string('umpan_balik')->nullable();
             $table->timestamps();
         });
     }

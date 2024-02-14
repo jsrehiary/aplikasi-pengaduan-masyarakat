@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
+    
     public function laporans()
     {
-        return $this->hasMany(Laporan::class, 'category_id', 'id');
+        return $this->hasOne(Laporan::class, 'category_id');
     }
 
     protected $guarded = ['id'];

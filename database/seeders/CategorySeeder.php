@@ -48,7 +48,7 @@ class CategorySeeder extends Seeder
                 'category_name' => 'Teknologi dan Komunikasi',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
+            ]
         ];
 
         DB::table('categories')->insert($categories);

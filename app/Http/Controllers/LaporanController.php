@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
-
-
 use App\Models\Category;
 use App\Models\Laporan;
 use Illuminate\Http\Request;
@@ -18,7 +15,7 @@ class LaporanController extends Controller
     }
     public function index()
     {
-        $laporans = Laporan::latest()->take(5)->get();
+        $laporans = Laporan::all();
         $title = "Beranda";
         $id_laporan = $this->generateLaporanId();
         $categories = Category::all();
@@ -30,14 +27,24 @@ class LaporanController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'id_laporan' => 'required|string|regex:/^LAPOR_\d{10}_[A-Za-z0-9]{5}$/',
-            'kategori'   => 'required|string',
-            'laporan'    => 'required|string',
-            'detail'     => 'required|string',
-            'alamat'     => 'required|string',
-            'foto'       => 'image'
-        ]);
+        $validateData = $this->validate(
+            $request,
+            [
+                'id_laporan' => 'required|string|regex:/^LAPOR_\d{10}_[A-Za-z0-9]{5}$/',
+                'kategori'   => 'required|string',
+                'laporan'    => 'required|string',
+                'detail'     => 'required|string',
+                'alamat'     => 'required|string',
+                'foto'       => 'image'
+            ],
+            [
+                'id_laporan.regex' => 'ID Laporan tidak valid',
+                'kategori.required' => 'Kategori tidak boleh kosong',
+                'laporan.required' => 'Judul laporan tidak boleh kosong',
+                'detail.required' => 'Detail tidak boleh kosong',
+                'alamat.required' => 'Alamat tidak boleh kosong',
+            ]
+        );
 
         $image = $request->file('foto');
         $imageName = $image->hashName();
@@ -52,7 +59,11 @@ class LaporanController extends Controller
             'foto' => $imageName
         ]);
 
-        return redirect()->route('index')->with(['success' => 'Laporan berhasil diajukan']);
+        if (!$validateData) {
+            return redirect('/#form')->with(['gagal' => 'Ada error sikit']);
+        }
+        
+        return redirect('/#form')->with(['success' => 'Laporan berhasil diajukan', 'rIdLaporan' => $request->id_laporan]);
     }
 
     public function find(Request $request)
@@ -63,6 +74,14 @@ class LaporanController extends Controller
         $result = Laporan::where('id_laporan', $query)->first();
         // dd($result);
 
-        return view('result', compact('result', 'title'));
+        return view('result', compact('title', 'result'));
+    }
+
+    public function gallery()
+    {
+        $title = "Galeri";
+        $photos = Laporan::select('foto')->get();
+
+        return view('gallery', compact('title', 'photos'));
     }
 }

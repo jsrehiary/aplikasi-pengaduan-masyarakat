@@ -18,11 +18,16 @@ class AuthController extends Controller
         $msgs = [
             'success' => [
                 'Blud berhasil login',
-                'Kamu jawa?'
+                'Berhasil login',
+                '<b class="text-success">Ding Ding Ding!</b>',
             ],
             'failed' => [
                 'Blud tidak terdaftar',
-                'Kamu bukan jawa...'
+                'Kamu tidak terdaftar...',
+                'Typo kah min?',
+                'Coba cek lagi',
+                'u sure about that?',
+                '<b class="text-danger">mmrrgghhhh....</b>',
             ]
         ];
         $request->validate([
@@ -42,7 +47,9 @@ class AuthController extends Controller
         }
         
         $randomMessage = $msgs[$type][array_rand($msgs[$type])];
-        
+        if ($type == 'success') {
+            return redirect('/admin')->with($type, $randomMessage);
+        }
         return redirect()->back()->with($type, $randomMessage);
     }
 

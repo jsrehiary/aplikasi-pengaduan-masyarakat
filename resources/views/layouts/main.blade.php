@@ -33,7 +33,7 @@
                 </ul>
                 @auth('user')
                     <span class="link-hover text-decoration-none border-3 border-start border-end px-3">
-                        Welcome, {{ auth('user')->user()->name }}!
+                        Halo, <b>{{ auth('user')->user()->name }}</b>!
                     </span>
                 @else
                     <a class="link-hover text-decoration-none border-3 border-start border-end px-3"
